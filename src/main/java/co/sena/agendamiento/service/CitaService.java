@@ -1,0 +1,3 @@
+package co.sena.agendamiento.service;
+import java.time.*;import java.sql.*;import co.sena.agendamiento.repository.CitaRepository;
+public class CitaService {private final CitaRepository repo=new CitaRepository();public void guardarCita(int p,int m,LocalDateTime f)throws SQLException{Validacion.cita(p,m,f,LocalDateTime.now(ZoneId.of("America/Bogota")));repo.guardar(p,m,f);}public void actualizarEstado(int id,String e)throws SQLException{Validacion.estado(e);repo.estado(id,e);}public void eliminarCita(int id)throws SQLException{repo.eliminar(id);}public Object consultarTodas()throws SQLException{return repo.consultarTodas();}public Object personas(boolean m)throws SQLException{return repo.personas(m);}}

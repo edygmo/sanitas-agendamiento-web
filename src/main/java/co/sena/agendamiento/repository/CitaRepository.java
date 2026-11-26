@@ -1,0 +1,10 @@
+package co.sena.agendamiento.repository;
+import java.sql.*; import java.util.*; import co.sena.agendamiento.model.Cita;
+public class CitaRepository {
+ Connection abrir() throws SQLException {return DriverManager.getConnection(System.getenv().getOrDefault("SANITAS_DB_URL","jdbc:mysql://localhost:3306/sanitas_ev02"),System.getenv().getOrDefault("SANITAS_DB_USER","root"),System.getenv().getOrDefault("SANITAS_DB_PASSWORD",""));}
+ public List<Map<String,Object>> personas(boolean medicos)throws SQLException {var lista=new ArrayList<Map<String,Object>>();try(var c=abrir();var s=c.createStatement();var rs=s.executeQuery("SELECT id,nombre FROM "+(medicos?"medico":"paciente")+" ORDER BY nombre")){while(rs.next())lista.add(Map.of("id",rs.getInt(1),"nombre",rs.getString(2)));}return lista;}
+ public List<Map<String,Object>> consultarTodas()throws SQLException {var lista=new ArrayList<Map<String,Object>>();try(var c=abrir();var s=c.createStatement();var rs=s.executeQuery("SELECT c.id,p.nombre,m.nombre,c.fecha,c.estado FROM cita c JOIN paciente p ON p.id=c.paciente_id JOIN medico m ON m.id=c.medico_id ORDER BY c.fecha")){while(rs.next())lista.add(Map.of("id",rs.getInt(1),"paciente",rs.getString(2),"medico",rs.getString(3),"fecha",rs.getString(4),"estado",rs.getString(5)));}return lista;}
+ public void guardar(int p,int m,java.time.LocalDateTime f)throws SQLException{try(var c=abrir();var s=c.prepareStatement("INSERT INTO cita(paciente_id,medico_id,fecha) VALUES(?,?,?)")){s.setInt(1,p);s.setInt(2,m);s.setTimestamp(3,Timestamp.valueOf(f));s.executeUpdate();}}
+ public void estado(int id,String e)throws SQLException{try(var c=abrir();var s=c.prepareStatement("UPDATE cita SET estado=? WHERE id=? AND estado='PENDIENTE'")){s.setString(1,e);s.setInt(2,id);if(s.executeUpdate()!=1)throw new IllegalArgumentException("Cita no disponible para cambio de estado.");}}
+ public void eliminar(int id)throws SQLException{try(var c=abrir();var s=c.prepareStatement("DELETE FROM cita WHERE id=?")){s.setInt(1,id);if(s.executeUpdate()!=1)throw new IllegalArgumentException("Cita inexistente.");}}
+}

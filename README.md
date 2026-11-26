@@ -1,0 +1,2 @@
+# Sanitas EV02
+Prototipo académico local, reconstruido a partir de CitaController.java. No usar con datos reales: no incluye autenticación ni protección CSRF. Java 17, Maven, Tomcat 10.1, MySQL 8. Importar SQL de la carpeta 02. Configurar variables SANITAS_DB_URL, SANITAS_DB_USER, SANITAS_DB_PASSWORD en el entorno de Tomcat. Ejecutar `mvn clean package`, copiar target/sanitas.war a webapps de Tomcat, iniciar servidor y abrir http://localhost:8080/sanitas/citas. No publicar credenciales.
